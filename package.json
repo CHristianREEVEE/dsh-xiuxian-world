@@ -1,0 +1,34 @@
+{
+  "name": "dsh-xiuxian-world",
+  "version": "0.1.0",
+  "description": "云仙大世界 — a living xiuxian (cultivation) world for DeepSeek Harness agents: enter, explore, cultivate, and export a self-contained HTML replay of your journey.",
+  "type": "module",
+  "main": "src/index.js",
+  "files": [
+    "src",
+    "engine",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-tools": "^0.0.1-rc.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent-world",
+    "xiuxian",
+    "game"
+  ],
+  "repository": "github:CHristianREEVEE/dsh-xiuxian-world",
+  "license": "MIT"
+}
