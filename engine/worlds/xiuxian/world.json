@@ -1,0 +1,391 @@
+{
+  "id": "xiuxian",
+  "name": "云仙大世界",
+  "desc": "灵气充沛的修仙世界。凡人求道，筑基炼气，终有一日飞升成仙。",
+  "map": {
+    "width": 1000,
+    "height": 700,
+    "regions": [
+      { "id": "fanchen", "name": "凡尘大陆", "labelPos": [190, 200] },
+      { "id": "xuanhuang", "name": "玄黄大陆", "labelPos": [530, 190] },
+      { "id": "jiutian", "name": "九天之上", "labelPos": [855, 105] },
+      { "id": "haiyu", "name": "无尽海域", "labelPos": [800, 560] }
+    ],
+    "continents": [
+      {
+        "id": "fanchen",
+        "polygon": [[70, 150], [200, 120], [330, 135], [365, 300], [340, 470], [290, 600], [170, 610], [85, 500], [55, 300]],
+        "color": "#1c2a22"
+      },
+      {
+        "id": "xuanhuang",
+        "polygon": [[385, 150], [620, 125], [720, 270], [735, 430], [650, 560], [500, 575], [390, 490], [355, 280]],
+        "color": "#26251c"
+      },
+      {
+        "id": "jiutian",
+        "islands": true,
+        "polygon": [[755, 25], [960, 15], [970, 285], [850, 300], [745, 190]],
+        "color": "#1e2433"
+      },
+      {
+        "id": "haiyu",
+        "islands": true,
+        "polygon": [[560, 575], [970, 350], [985, 670], [575, 670]],
+        "color": "#16222b"
+      }
+    ]
+  },
+  "spawn": "village",
+  "realms": [
+    { "name": "凡人", "maxCultivation": 100, "maxLifespan": 100, "breakItem": null },
+    { "name": "筑基", "maxCultivation": 500, "maxLifespan": 150, "breakItem": "筑基丹" },
+    { "name": "金丹", "maxCultivation": 2000, "maxLifespan": 300, "breakItem": "金丹" },
+    { "name": "元婴", "maxCultivation": 8000, "maxLifespan": 500, "breakItem": "元婴丹" },
+    { "name": "化神", "maxCultivation": 30000, "maxLifespan": 1000, "breakItem": "化神丹" },
+    { "name": "炼虚", "maxCultivation": 100000, "maxLifespan": 2000, "breakItem": "炼虚丹" },
+    { "name": "合体", "maxCultivation": 500000, "maxLifespan": 5000, "breakItem": "合体丹" },
+    { "name": "大乘", "maxCultivation": 99999999, "maxLifespan": 99999, "breakItem": "大乘丹" }
+  ],
+  "paths": {
+    "sword": {
+      "name": "剑修",
+      "desc": "以剑入道，攻伐第一。一剑破万法。",
+      "combatMod": 1.25,
+      "defMod": 1.0,
+      "skills": [
+        { "name": "剑气斩", "desc": "凝聚剑气，斩敌于三丈之外", "spirit": 10, "type": "attack", "mult": 1.5 },
+        { "name": "万剑归宗", "desc": "万剑齐发，遮天蔽日", "spirit": 30, "type": "attack", "mult": 3.0 },
+        { "name": "剑意护体", "desc": "剑意化盾，滴水不漏", "spirit": 20, "type": "defend", "defMult": 2.0 }
+      ]
+    },
+    "pill": {
+      "name": "丹修",
+      "desc": "丹道通神，以丹续命。攻守兼备，疗伤无双。",
+      "combatMod": 1.0,
+      "defMod": 1.1,
+      "skills": [
+        { "name": "回春术", "desc": "丹力化春雨，疗愈伤势", "spirit": 15, "type": "heal", "healPct": 0.35 },
+        { "name": "丹火诀", "desc": "丹炉真火，焚尽邪祟", "spirit": 20, "type": "attack", "mult": 2.0 },
+        { "name": "九转金丹", "desc": "攻守相济，生死人肉白骨", "spirit": 40, "type": "attack", "mult": 2.5, "healPct": 0.2 }
+      ]
+    },
+    "array": {
+      "name": "阵修",
+      "desc": "布阵御敌，不动如山。防御无双，困杀强敌。",
+      "combatMod": 0.9,
+      "defMod": 1.5,
+      "skills": [
+        { "name": "石阵守护", "desc": "地阵升起，护住周身", "spirit": 15, "type": "defend", "defMult": 2.5 },
+        { "name": "困杀阵", "desc": "困敌于阵中，缓缓绞杀", "spirit": 20, "type": "attack", "mult": 1.8 },
+        { "name": "万象归尘", "desc": "大阵碾过，万象归尘", "spirit": 35, "type": "attack", "mult": 2.8 }
+      ]
+    }
+  },
+  "areas": [
+    { "id": "village", "name": "青石村", "continent": "fanchen", "type": "town", "x": 160, "y": 380, "minRealm": 0,
+      "adjacent": ["forest", "market", "river", "cliff"],
+      "desc": "凡尘边境的小村落，鸡犬相闻。村口老槐树下，常有散修歇脚。" },
+    { "id": "forest", "name": "灵兽森林", "continent": "fanchen", "type": "forest", "x": 250, "y": 300, "minRealm": 0,
+      "adjacent": ["village", "mine", "cave"],
+      "desc": "古木参天，灵气氤氲。林间多灵草，也潜伏着低阶妖兽。" },
+    { "id": "mine", "name": "玄铁矿脉", "continent": "fanchen", "type": "mine", "x": 300, "y": 180, "minRealm": 0,
+      "adjacent": ["forest", "cave"],
+      "desc": "裸露的黑色矿脉蜿蜒入山，玄铁是炼器师的最爱。" },
+    { "id": "river", "name": "碧水江", "continent": "fanchen", "type": "river", "x": 120, "y": 250, "minRealm": 0,
+      "adjacent": ["village", "market"],
+      "desc": "江水碧如翡翠，传说江底沉着一枚仙人遗落的玉简。" },
+    { "id": "market", "name": "散修集市", "continent": "fanchen", "type": "market", "x": 210, "y": 480, "minRealm": 0,
+      "adjacent": ["village", "river", "beach"],
+      "desc": "南来北往的散修在此交易丹药材料，讨价还价声不绝于耳。" },
+    { "id": "cave", "name": "幽冥洞府", "continent": "fanchen", "type": "dungeon_entrance", "x": 330, "y": 300, "minRealm": 0,
+      "adjacent": ["forest", "mine"], "dungeonId": "spirit_cave",
+      "desc": "洞口黑雾缭绕，隐有鬼哭。据传洞府深处藏着筑基丹方。" },
+    { "id": "cliff", "name": "断魂崖", "continent": "fanchen", "type": "event", "x": 265, "y": 560, "minRealm": 0,
+      "adjacent": ["village", "mountain"],
+      "desc": "万丈悬崖下云海翻涌，历代有修士在此悟道，也有人在此殒身。" },
+    { "id": "mountain", "name": "万崖山", "continent": "xuanhuang", "type": "mountain", "x": 430, "y": 430, "minRealm": 0,
+      "adjacent": ["cliff", "sect", "lake"],
+      "desc": "玄黄大陆第一高山，山巅灵气凝成云海，是打坐修炼的绝佳之地。" },
+    { "id": "sect", "name": "天剑宗", "continent": "xuanhuang", "type": "sect", "x": 520, "y": 300, "minRealm": 0,
+      "adjacent": ["mountain", "lake", "tower"],
+      "desc": "剑气冲霄的宗门山门，长老讲道之时，剑鸣之声十里可闻。" },
+    { "id": "lake", "name": "洗剑湖", "continent": "xuanhuang", "type": "event", "x": 450, "y": 210, "minRealm": 1,
+      "adjacent": ["mountain", "sect", "heaven"],
+      "desc": "湖水澄澈如镜，湖底沉着历代剑修的佩剑，剑气森然。" },
+    { "id": "tower", "name": "镇妖塔", "continent": "xuanhuang", "type": "dungeon_entrance", "x": 620, "y": 215, "minRealm": 1,
+      "adjacent": ["sect", "volcano"], "dungeonId": "demon_tower",
+      "desc": "九层高塔镇压万妖，塔身刻满符箓，隐有妖啸传出。" },
+    { "id": "volcano", "name": "炽天火山", "continent": "xuanhuang", "type": "event", "x": 640, "y": 400, "minRealm": 2,
+      "adjacent": ["tower", "ghost"],
+      "desc": "终年喷吐赤焰，火灵之气浓郁，亦有火毒之险。" },
+    { "id": "ghost", "name": "幽冥古道", "continent": "xuanhuang", "type": "dungeon_entrance", "x": 560, "y": 520, "minRealm": 2,
+      "adjacent": ["volcano", "beast"], "dungeonId": "ghost_path",
+      "desc": "青石古道通向幽冥，两侧白骨森森，鬼火明灭。" },
+    { "id": "beast", "name": "深渊兽巢", "continent": "xuanhuang", "type": "event", "x": 665, "y": 545, "minRealm": 3,
+      "adjacent": ["ghost", "abyss"],
+      "desc": "深渊妖兽的巢穴，遍地兽骨，偶有兽宝遗落。" },
+    { "id": "abyss", "name": "丈量深渊", "continent": "xuanhuang", "type": "dungeon_entrance", "x": 715, "y": 455, "minRealm": 3,
+      "adjacent": ["beast"], "dungeonId": "abyss_depth",
+      "desc": "深不见底的裂谷，传说是上古仙人一剑劈开之地。" },
+    { "id": "heaven", "name": "九天宗门", "continent": "jiutian", "type": "event", "x": 810, "y": 130, "minRealm": 3,
+      "adjacent": ["lake", "thunder", "celestial"],
+      "desc": "浮于九天之上的仙家宫阙，云雾缭绕，仙鹤盘旋。" },
+    { "id": "thunder", "name": "天劫雷池", "continent": "jiutian", "type": "dungeon_entrance", "x": 900, "y": 205, "minRealm": 4,
+      "adjacent": ["heaven", "celestial"], "dungeonId": "thunder_pool",
+      "desc": "劫云常年不散，雷池中沉睡着渡劫失败者的残识。" },
+    { "id": "celestial", "name": "仙宫遗址", "continent": "jiutian", "type": "event", "x": 840, "y": 60, "minRealm": 4,
+      "adjacent": ["heaven", "thunder"],
+      "desc": "上古仙宫崩塌后的遗址，断壁残垣间犹存大道痕迹。" },
+    { "id": "beach", "name": "海滩", "continent": "haiyu", "type": "beach", "x": 620, "y": 620, "minRealm": 1,
+      "adjacent": ["market", "dragon"],
+      "desc": "细软沙滩上散落着贝壳与灵石，潮起潮落间或有海货。" },
+    { "id": "dragon", "name": "海底龙宫", "continent": "haiyu", "type": "dungeon_entrance", "x": 780, "y": 635, "minRealm": 2,
+      "adjacent": ["beach", "secret"], "dungeonId": "dragon_palace",
+      "desc": "海面之下珊瑚宫阙辉煌，虾兵蟹将往来巡守。" },
+    { "id": "secret", "name": "上古秘境", "continent": "haiyu", "type": "dungeon_entrance", "x": 880, "y": 520, "minRealm": 3,
+      "adjacent": ["dragon", "island"], "dungeonId": "ancient_secret",
+      "desc": "海雾深处的孤岛秘境，结界斑驳，似有上古遗宝。" },
+    { "id": "island", "name": "蓬莱仙岛", "continent": "haiyu", "type": "dungeon_entrance", "x": 930, "y": 400, "minRealm": 4,
+      "adjacent": ["secret"], "dungeonId": "penglai",
+      "desc": "传说中的仙岛，一步一景皆是大道，亦有仙尊残影守岛。" }
+  ],
+  "dungeons": [
+    {
+      "id": "spirit_cave", "name": "幽冥洞府", "areaId": "cave", "floors": 5, "minRealm": 1,
+      "enemies": [
+        { "name": "灵蛛", "hp": 30, "atk": 8 },
+        { "name": "石皮蜥", "hp": 45, "atk": 10 },
+        { "name": "阴风鬼", "hp": 38, "atk": 12 }
+      ],
+      "boss": { "name": "幽冥老祖", "hp": 130, "atk": 18, "drops": ["筑基丹"] },
+      "rewards": { "cultivation": 100, "spiritStones": 60, "items": ["聚气丹"] },
+      "scenes": [
+        "洞口阴风扑面，石壁上磷火明灭。",
+        "岔路深处传来滴水声，回音不绝。",
+        "石室中央摆着一口残破的石棺。",
+        "地道向下倾斜，寒气越来越重。",
+        "幽冥老祖盘坐于骨殿之上，缓缓睁开了眼。"
+      ]
+    },
+    {
+      "id": "demon_tower", "name": "镇妖塔", "areaId": "tower", "floors": 7, "minRealm": 1,
+      "enemies": [
+        { "name": "妖狐", "hp": 60, "atk": 14 },
+        { "name": "塔灵傀儡", "hp": 80, "atk": 16 },
+        { "name": "蚀骨蝠", "hp": 55, "atk": 18 }
+      ],
+      "boss": { "name": "镇塔妖王", "hp": 210, "atk": 26, "drops": ["金丹"] },
+      "rewards": { "cultivation": 300, "spiritStones": 120, "items": ["回血丹"] },
+      "scenes": [
+        "一层塔门轰然洞开，妖气扑面。",
+        "二层回廊上刻满镇压符文，微微发烫。",
+        "三层牢笼尽碎，妖物低吼不止。",
+        "四层悬着一面照妖镜，光怪陆离。",
+        "五层的地面渗出黑血，脚步声在身后响起。",
+        "六层风声鹤唳，妖王之力隐隐可感。",
+        "塔顶妖王现出真身，妖云蔽月。"
+      ]
+    },
+    {
+      "id": "ghost_path", "name": "幽冥古道", "areaId": "ghost", "floors": 5, "minRealm": 2,
+      "enemies": [
+        { "name": "骷髅兵", "hp": 90, "atk": 20 },
+        { "name": "冤魂", "hp": 70, "atk": 24 },
+        { "name": "拦路鬼修", "hp": 110, "atk": 22 }
+      ],
+      "boss": { "name": "古道之主", "hp": 280, "atk": 32, "drops": ["元婴丹"] },
+      "rewards": { "cultivation": 600, "spiritStones": 200, "items": ["聚气丹"] },
+      "scenes": [
+        "青石古道延入迷雾，两侧鬼火摇曳。",
+        "路旁石碑字迹斑驳，似是镇魂之文。",
+        "断桥之下黑水翻涌，隐有鬼哭。",
+        "古驿站残垣间，白骨手中还握着半张残图。",
+        "古道尽头黑袍之主转身，鬼气冲霄。"
+      ]
+    },
+    {
+      "id": "abyss_depth", "name": "丈量深渊", "areaId": "abyss", "floors": 6, "minRealm": 3,
+      "enemies": [
+        { "name": "深渊魔蛛", "hp": 140, "atk": 30 },
+        { "name": "蚀魂影", "hp": 120, "atk": 34 },
+        { "name": "灾厄兽", "hp": 180, "atk": 32 }
+      ],
+      "boss": { "name": "深渊之眼", "hp": 420, "atk": 45, "drops": ["化神丹"] },
+      "rewards": { "cultivation": 1500, "spiritStones": 320, "items": ["回血丹"] },
+      "scenes": [
+        "裂谷边缘向下望去，黑暗深不见底。",
+        "崖壁上的古藤在无风中轻晃。",
+        "半空的浮台上，前人的遗物散落一地。",
+        "黑暗中传来巨物爬行之声。",
+        "四周的空气开始扭曲，空间不稳。",
+        "深渊之眼在黑暗中央睁开，凝视来者。"
+      ]
+    },
+    {
+      "id": "thunder_pool", "name": "天劫雷池", "areaId": "thunder", "floors": 5, "minRealm": 4,
+      "enemies": [
+        { "name": "雷灵", "hp": 200, "atk": 40 },
+        { "name": "劫云残魂", "hp": 180, "atk": 44 },
+        { "name": "雷兽", "hp": 240, "atk": 42 }
+      ],
+      "boss": { "name": "九霄雷帝残识", "hp": 620, "atk": 60, "drops": ["炼虚丹"] },
+      "rewards": { "cultivation": 4000, "spiritStones": 500, "items": ["回血丹"] },
+      "scenes": [
+        "踏入雷池的瞬间，汗毛倒竖。",
+        "紫色电弧在云层间游走如龙。",
+        "焦黑的大地上插着半截断剑。",
+        "雷声轰鸣，一步一劫。",
+        "九霄之上，雷帝残识携万钧之势压落。"
+      ]
+    },
+    {
+      "id": "dragon_palace", "name": "海底龙宫", "areaId": "dragon", "floors": 6, "minRealm": 2,
+      "enemies": [
+        { "name": "虾兵统领", "hp": 100, "atk": 22 },
+        { "name": "蟹将", "hp": 130, "atk": 24 },
+        { "name": "蛟卫", "hp": 150, "atk": 28 }
+      ],
+      "boss": { "name": "老龙王", "hp": 360, "atk": 40, "drops": ["元婴丹"] },
+      "rewards": { "cultivation": 800, "spiritStones": 280, "items": ["聚气丹"] },
+      "scenes": [
+        "避水珠光晕笼罩周身，踏入海底。",
+        "珊瑚宫阙之间，鱼群如穿梭的箭矢。",
+        "沉船残骸中，宝光隐现。",
+        "龙宫广场上，虾兵蟹将列阵而立。",
+        "蛟龙盘柱，龙威如山。",
+        "老龙王于王座之上睁眼，四海震动。"
+      ]
+    },
+    {
+      "id": "ancient_secret", "name": "上古秘境", "areaId": "secret", "floors": 7, "minRealm": 3,
+      "enemies": [
+        { "name": "秘境守卫", "hp": 150, "atk": 32 },
+        { "name": "上古傀儡", "hp": 190, "atk": 30 },
+        { "name": "遗迹妖灵", "hp": 160, "atk": 36 }
+      ],
+      "boss": { "name": "秘境之灵", "hp": 470, "atk": 50, "drops": ["化神丹"] },
+      "rewards": { "cultivation": 1800, "spiritStones": 380, "items": ["聚气丹"] },
+      "scenes": [
+        "穿过斑驳结界，时光仿佛倒流万年。",
+        "上古战场遗迹，断兵残甲犹存道韵。",
+        "灵田荒芜，一株古药仍在顽强生长。",
+        "石殿中星图流转，暗藏阵法。",
+        "悬空石阶通向迷雾深处。",
+        "耳边隐约传来上古修士的诵经声。",
+        "秘境之灵凝聚成形，执掌此界万载。"
+      ]
+    },
+    {
+      "id": "penglai", "name": "蓬莱仙岛", "areaId": "island", "floors": 8, "minRealm": 4,
+      "enemies": [
+        { "name": "仙岛灵鹤", "hp": 220, "atk": 42 },
+        { "name": "守岛剑灵", "hp": 260, "atk": 46 },
+        { "name": "云海妖蛟", "hp": 300, "atk": 48 }
+      ],
+      "boss": { "name": "蓬莱仙尊残影", "hp": 820, "atk": 70, "drops": ["合体丹"] },
+      "rewards": { "cultivation": 6000, "spiritStones": 700, "items": ["回血丹"] },
+      "scenes": [
+        "踏上仙岛，灵气浓得化不开。",
+        "一步一莲花开，脚下自有道纹。",
+        "古亭之中棋局未终，似有人对弈万载。",
+        "剑冢万剑朝宗，剑鸣如潮。",
+        "云海翻涌，仙宫一角若隐若现。",
+        "灵泉之中倒映着另一个世界。",
+        "大道之音自九天垂落，洗炼身心。",
+        "仙尊残影负手而立，目光穿越万年。"
+      ]
+    }
+  ],
+  "items": {
+    "聚气丹": { "type": "pill", "desc": "恢复 40 点灵力", "spirit": 40, "price": 15, "sell": 5 },
+    "回血丹": { "type": "pill", "desc": "恢复 50 点生命", "hp": 50, "price": 12, "sell": 4 },
+    "疗伤散": { "type": "pill", "desc": "恢复 25 点生命", "hp": 25, "price": 8, "sell": 2 },
+    "筑基丹": { "type": "breakthrough", "desc": "筑基期突破所需丹药", "price": 120, "sell": 40 },
+    "金丹": { "type": "breakthrough", "desc": "金丹期突破所需之物", "price": 0, "sell": 120 },
+    "元婴丹": { "type": "breakthrough", "desc": "元婴期突破所需丹药", "price": 0, "sell": 300 },
+    "化神丹": { "type": "breakthrough", "desc": "化神期突破所需丹药", "price": 0, "sell": 600 },
+    "炼虚丹": { "type": "breakthrough", "desc": "炼虚期突破所需丹药", "price": 0, "sell": 1000 },
+    "合体丹": { "type": "breakthrough", "desc": "合体期突破所需丹药", "price": 0, "sell": 1800 },
+    "大乘丹": { "type": "breakthrough", "desc": "大乘期突破所需丹药", "price": 0, "sell": 3000 },
+    "灵草": { "type": "material", "desc": "常见灵药，可售换灵石", "price": 0, "sell": 5 },
+    "血参": { "type": "material", "desc": "百年血参，药力惊人", "price": 0, "sell": 30 },
+    "玄铁": { "type": "material", "desc": "炼器材料，散修集市有价无市", "price": 0, "sell": 8 },
+    "铁精": { "type": "material", "desc": "万年玄铁之精，可遇不可求", "price": 0, "sell": 25 },
+    "鲜鱼": { "type": "material", "desc": "灵水鲜鱼，凡人也爱吃", "price": 0, "sell": 3 },
+    "蚌珠": { "type": "material", "desc": "老蚌含珠，圆润有光", "price": 0, "sell": 15 },
+    "灵蛛丝": { "type": "material", "desc": "妖蛛之丝，坚韧异常", "price": 0, "sell": 6 },
+    "妖丹": { "type": "material", "desc": "妖兽内丹，蕴含妖力", "price": 0, "sell": 20 },
+    "火灵石": { "type": "material", "desc": "火山深处的火之结晶", "price": 0, "sell": 28 },
+    "兽宝": { "type": "material", "desc": "深渊兽体内的至宝", "price": 0, "sell": 45 },
+    "仙缘玉简": { "type": "treasure", "desc": "仙人遗落的玉简，藏着一段道法", "price": 0, "sell": 100 }
+  },
+  "shop": ["聚气丹", "回血丹", "疗伤散", "筑基丹"],
+  "gather": {
+    "collect": [
+      { "item": "灵草", "weight": 70 },
+      { "item": "spiritStones", "min": 2, "max": 5, "weight": 20 },
+      { "item": "血参", "weight": 10 }
+    ],
+    "mine": [
+      { "item": "玄铁", "weight": 70 },
+      { "item": "spiritStones", "min": 3, "max": 6, "weight": 20 },
+      { "item": "铁精", "weight": 10 }
+    ],
+    "fish": [
+      { "item": "鲜鱼", "weight": 60 },
+      { "item": "蚌珠", "weight": 25 },
+      { "item": "spiritStones", "min": 2, "max": 4, "weight": 15 }
+    ]
+  },
+  "fortuneEvents": {
+    "cliff": [
+      { "type": "cultivation", "min": 15, "max": 40, "text": "于崖边静坐半日，隐有所悟，修为精进。", "weight": 30 },
+      { "type": "spiritStones", "min": 5, "max": 15, "text": "崖缝中拾得一袋灵石，应是前人遗落。", "weight": 25 },
+      { "type": "hp", "min": -15, "max": -5, "text": "山风骤起，失足滑落，幸得藤蔓相救，受了些轻伤。", "weight": 20 },
+      { "type": "comprehension", "text": "观云海翻涌，触类旁通，悟性提升了。", "weight": 10 },
+      { "type": "item", "item": "血参", "text": "崖壁石缝中竟生着一株血参，小心采下。", "weight": 15 }
+    ],
+    "lake": [
+      { "type": "cultivation", "min": 20, "max": 50, "text": "湖底剑气冲霄而起，观摩良久，剑心通明。", "weight": 35 },
+      { "type": "spiritStones", "min": 8, "max": 20, "text": "湖边浅滩下摸出几枚灵石。", "weight": 25 },
+      { "type": "hp", "min": -20, "max": -8, "text": "探身捞剑，被湖底剑气所伤。", "weight": 20 },
+      { "type": "comprehension", "text": "于湖心岛悟剑，悟性提升了。", "weight": 10 },
+      { "type": "item", "item": "仙缘玉简", "text": "湖底沉着的一枚玉简浮出水面，似是仙人遗物。", "weight": 10 }
+    ],
+    "volcano": [
+      { "type": "item", "item": "火灵石", "text": "岩浆边缘拾得一枚火灵石，入手滚烫。", "weight": 35 },
+      { "type": "cultivation", "min": 25, "max": 60, "text": "于火山口淬炼己身，修为大进。", "weight": 25 },
+      { "type": "hp", "min": -25, "max": -10, "text": "火毒侵体，咳出几口黑烟。", "weight": 25 },
+      { "type": "body", "text": "烈焰淬体，体魄提升了。", "weight": 15 }
+    ],
+    "beast": [
+      { "type": "item", "item": "兽宝", "text": "在兽骨堆中寻得一枚兽宝。", "weight": 25 },
+      { "type": "item", "item": "妖丹", "text": "妖兽厮杀后的战场上，捡到一枚妖丹。", "weight": 25 },
+      { "type": "spiritStones", "min": 10, "max": 25, "text": "兽巢深处藏着一小堆灵石。", "weight": 20 },
+      { "type": "hp", "min": -30, "max": -12, "text": "惊动了幼兽，被兽群追了三里地。", "weight": 30 }
+    ],
+    "heaven": [
+      { "type": "cultivation", "min": 60, "max": 150, "text": "于仙宫广场听仙人讲道，如醍醐灌顶。", "weight": 40 },
+      { "type": "comprehension", "text": "仙人对谈言犹在耳，悟性提升了。", "weight": 20 },
+      { "type": "spiritStones", "min": 20, "max": 50, "text": "仙家赏了几枚上品灵石。", "weight": 25 },
+      { "type": "none", "text": "仙宫大门紧闭，只得远观而返。", "weight": 15 }
+    ],
+    "celestial": [
+      { "type": "item", "item": "仙缘玉简", "text": "废墟石案上，静静躺着一枚仙缘玉简。", "weight": 20 },
+      { "type": "cultivation", "min": 80, "max": 200, "text": "残垣断壁间道韵犹存，参悟半日，修为暴涨。", "weight": 30 },
+      { "type": "hp", "min": -35, "max": -15, "text": "触发上古禁制，被余威震伤。", "weight": 25 },
+      { "type": "spiritStones", "min": 25, "max": 60, "text": "遗址藏宝阁中拾得一批灵石。", "weight": 25 }
+    ]
+  },
+  "ask": {
+    "sect": { "cost": 10, "cultivationBase": 10, "comprehensionChance": 0.1, "text": "聆听天剑宗长老讲道" },
+    "mountain": { "cost": 6, "cultivationBase": 7, "comprehensionChance": 0.06, "text": "于山巅云海中参悟" }
+  },
+  "time": {
+    "tickMs": 3000,
+    "dayPerTick": 0.05,
+    "daysPerYear": 360,
+    "startAge": 16
+  }
+}
