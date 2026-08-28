@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>__REPLAY_TITLE__</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0e14'/><text x='16' y='22' font-size='16' text-anchor='middle' fill='%23c9a961' font-family='serif'>观</text></svg>">
+<style>
+:root {
+  --ink-0: #07090d; --ink-1: #0b0f15; --ink-2: #10161f; --ink-3: #161e29;
+  --glass: rgba(16,22,31,0.72); --glass-hi: rgba(22,30,41,0.85);
+  --paper: #d9d2bf; --paper-dim: #9a937f; --paper-faint: #6b6557;
+  --gold: #c9a961; --gold-bright: #ecd28c; --gold-dim: #8a7440;
+  --jade: #8fd6b4; --red: #d05a4e; --red-bright: #ef7b6d; --purple: #a78bfa;
+  --line: rgba(201,169,97,0.22); --line-strong: rgba(201,169,97,0.45);
+  --font-kai: "Kaiti SC","STKaiti","KaiTi","DFKai-SB","Noto Serif SC",serif;
+  --font-body: "PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; overflow:hidden; }
+body { background:var(--ink-0); color:var(--paper); font-family:var(--font-body); font-size:13px; }
+body::before { content:""; position:fixed; inset:0; z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(38,50,68,0.55),transparent 60%),
+             radial-gradient(ellipse 60% 50% at 85% 110%,rgba(24,34,30,0.5),transparent 60%),
+             url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.8 0 0 0 0 0.75 0 0 0 0 0.6 0 0 0 0.03 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events:none; }
+#app { position:relative; z-index:1; display:grid; height:100vh;
+  grid-template-rows:52px 1fr 64px;
+  grid-template-columns:250px 1fr 300px;
+  grid-template-areas:"top top top" "left map right" "bar bar bar";
+  gap:8px; padding:8px; }
+.panel { background:var(--glass); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+
+/* ── 顶栏 ── */
+.topbar { grid-area:top; display:flex; align-items:center; justify-content:space-between; padding:0 18px; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-title { font-family:var(--font-kai); font-size:20px; letter-spacing:4px; color:var(--gold-bright); }
+.brand-sub { font-size:10px; letter-spacing:3px; color:var(--paper-faint); }
+.stats-row { display:flex; gap:22px; }
+.stat { text-align:center; }
+.stat-v { font-family:var(--font-kai); font-size:17px; color:var(--gold); letter-spacing:1px; }
+.stat-v .u { font-size:10px; color:var(--paper-faint); margin-left:2px; }
+.stat-k { font-size:9px; letter-spacing:2px; color:var(--paper-faint); margin-top:1px; }
+
+/* ── 左栏 修士 ── */
+.left { grid-area:left; display:flex; flex-direction:column; }
+.left-head { padding:10px 14px 8px; font-family:var(--font-kai); font-size:15px; letter-spacing:3px; color:var(--gold); border-bottom:1px solid var(--line); }
+.agent-list { flex:1; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:8px; }
+.agent-list::-webkit-scrollbar, .log-body::-webkit-scrollbar { width:5px; }
+.agent-list::-webkit-scrollbar-thumb, .log-body::-webkit-scrollbar-thumb { background:rgba(201,169,97,0.25); border-radius:3px; }
+.acard { background:rgba(11,15,21,0.55); border:1px solid rgba(201,169,97,0.15); border-radius:8px; padding:9px 11px; cursor:pointer; transition:border-color .2s, background .2s; }
+.acard:hover { background:rgba(22,30,41,0.75); }
+.acard.sel { border-color:var(--line-strong); background:var(--glass-hi); box-shadow:0 0 0 1px rgba(201,169,97,0.2) inset; }
+.acard-top { display:flex; align-items:center; gap:8px; }
+.avatar { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-kai); font-size:15px; color:#0a0e14; font-weight:700; flex:none; }
+.acard-name { font-family:var(--font-kai); font-size:15px; color:var(--paper); letter-spacing:1px; }
+.acard-path { font-size:10px; color:var(--paper-faint); margin-left:auto; }
+.realm-tag { font-size:10px; padding:1px 7px; border-radius:10px; border:1px solid var(--line); color:var(--gold); margin-left:6px; }
+.acard-status { font-size:10px; color:var(--paper-dim); margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.acard-status .st-combat { color:var(--red-bright); }
+.acard-status .st-dungeon { color:var(--purple); }
+.acard-status .st-move { color:var(--jade); }
+.bars { display:flex; gap:4px; margin-top:6px; }
+.bar { flex:1; height:3.5px; border-radius:2px; background:rgba(255,255,255,0.07); overflow:hidden; }
+.bar i { display:block; height:100%; border-radius:2px; transition:width .5s ease; }
+.bar.hp i { background:linear-gradient(90deg,#a0443a,var(--red)); }
+.bar.mp i { background:linear-gradient(90deg,#3d6a8f,#5f9ec9); }
+.bar.exp i { background:linear-gradient(90deg,var(--gold-dim),var(--gold)); }
+.acard-foot { display:flex; justify-content:space-between; font-size:9.5px; color:var(--paper-faint); margin-top:5px; }
+.acard-foot b { color:var(--paper-dim); font-weight:500; }
+
+/* ── 地图 ── */
+.mapwrap { grid-area:map; position:relative; }
+canvas#map { width:100%; height:100%; display:block; cursor:grab; }
+canvas#map:active { cursor:grabbing; }
+.map-legend { position:absolute; left:12px; bottom:10px; display:flex; gap:14px; font-size:10px; color:var(--paper-faint); background:rgba(7,9,13,0.55); padding:5px 10px; border-radius:6px; border:1px solid rgba(201,169,97,0.12); }
+.lg-dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; vertical-align:0; }
+.map-tip { position:absolute; pointer-events:none; background:rgba(7,9,13,0.92); border:1px solid var(--line-strong); color:var(--paper); border-radius:6px; padding:7px 11px; font-size:11px; line-height:1.6; max-width:220px; display:none; z-index:5; }
+.map-tip .t-name { font-family:var(--font-kai); font-size:14px; color:var(--gold-bright); letter-spacing:1px; }
+.follow-tag { position:absolute; top:10px; left:12px; font-size:10px; color:var(--ink-0); background:var(--gold); padding:3px 10px; border-radius:10px; display:none; letter-spacing:1px; }
+
+/* ── 右栏 日志 ── */
+.right { grid-area:right; display:flex; flex-direction:column; }
+.right-head { padding:10px 14px 8px; display:flex; align-items:baseline; justify-content:space-between; border-bottom:1px solid var(--line); }
+.right-head .h { font-family:var(--font-kai); font-size:15px; letter-spacing:3px; color:var(--gold); }
+.right-head .d { font-size:10px; color:var(--paper-faint); }
+.log-body { flex:1; overflow-y:auto; padding:8px 10px; display:flex; flex-direction:column; gap:2px; }
+.logline { padding:4px 8px; border-left:2px solid transparent; font-size:11.5px; line-height:1.55; color:var(--paper-dim); animation:login .4s ease; border-radius:0 4px 4px 0; }
+@keyframes login { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+.logline .ld { color:var(--paper-faint); font-size:9.5px; margin-right:6px; font-variant-numeric:tabular-nums; }
+.logline.combat { border-left-color:var(--red); background:rgba(208,90,78,0.07); color:#d8a49b; }
+.logline.breakthrough { border-left-color:var(--gold); background:rgba(201,169,97,0.1); color:var(--gold-bright); }
+.logline.dungeon { border-left-color:var(--purple); color:#b8abd8; }
+.logline.event-good { border-left-color:var(--jade); color:var(--jade); }
+.logline.event-bad { border-left-color:var(--red); color:var(--red-bright); }
+.logline.agent { border-left-color:#5f9ec9; color:#a8c3d8; }
+.logline.sys { color:var(--paper-dim); }
+
+/* ── 底部控制 ── */
+.bar-panel { grid-area:bar; display:flex; align-items:center; gap:16px; padding:0 18px; }
+.btn-play { width:38px; height:38px; border-radius:50%; border:1px solid var(--line-strong); background:var(--glass-hi); color:var(--gold-bright); font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.btn-play:hover { background:rgba(201,169,97,0.15); border-color:var(--gold); }
+.btn-step { width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:transparent; color:var(--paper-dim); cursor:pointer; font-size:11px; }
+.btn-step:hover { color:var(--gold); border-color:var(--line-strong); }
+.speed-ctl { display:flex; gap:4px; }
+.spd { padding:3px 9px; font-size:11px; border-radius:5px; border:1px solid transparent; color:var(--paper-faint); background:transparent; cursor:pointer; font-variant-numeric:tabular-nums; }
+.spd.on { color:var(--gold-bright); border-color:var(--line-strong); background:rgba(201,169,97,0.12); }
+.timeline { flex:1; position:relative; height:34px; }
+.tl-track { position:absolute; left:0; right:0; top:14px; height:6px; border-radius:3px; background:rgba(255,255,255,0.06); cursor:pointer; }
+.tl-fill { position:absolute; left:0; top:0; height:100%; border-radius:3px; background:linear-gradient(90deg,var(--gold-dim),var(--gold)); width:0%; }
+.tl-head { position:absolute; top:6px; width:0; height:0; }
+.tl-head::after { content:""; position:absolute; left:-6px; top:0; width:12px; height:12px; border-radius:50%; background:var(--gold-bright); box-shadow:0 0 8px rgba(236,210,140,0.7); }
+.tl-mark { position:absolute; top:12px; width:5px; height:5px; border-radius:50%; transform:translateX(-2px); }
+.tl-mark.bt { background:var(--gold-bright); box-shadow:0 0 5px var(--gold); z-index:2; }
+.tl-mark.cb { background:var(--red); z-index:1; }
+.tl-mark:hover::before { content:attr(data-tip); position:absolute; bottom:14px; left:50%; transform:translateX(-50%); white-space:nowrap; background:rgba(7,9,13,0.95); border:1px solid var(--line-strong); padding:4px 8px; border-radius:5px; font-size:10px; color:var(--paper); }
+.time-read { font-family:var(--font-kai); font-size:14px; color:var(--gold); min-width:190px; text-align:right; letter-spacing:1px; }
+.time-read small { display:block; font-size:9px; color:var(--paper-faint); letter-spacing:2px; font-family:var(--font-body); }
+.loading { position:fixed; inset:0; z-index:99; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:var(--ink-0); }
+.loading .l-t { font-family:var(--font-kai); font-size:22px; letter-spacing:8px; color:var(--gold); animation:pulse 1.6s ease infinite; }
+@keyframes pulse { 50% { opacity:.45; } }
+.loading .l-s { font-size:11px; color:var(--paper-faint); letter-spacing:2px; }
+@media (max-width:1100px) { #app { grid-template-columns:210px 1fr 240px; } }
+</style>
+</head>
+<body>
+<div class="loading" id="loading"><div class="l-t">观 测 台</div><div class="l-s" id="loadmsg">正在加载世界回放数据……</div></div>
+<div id="app" style="visibility:hidden">
+  <div class="panel topbar">
+    <div class="brand">
+      <div class="brand-title">AI-BING WORLD</div>
+      <div class="brand-sub">云仙大世界 · 回放观测台</div>
+      <a href="./play.html" style="margin-left:14px;font-size:12px;color:var(--gold);border:1px solid var(--line);padding:3px 12px;border-radius:6px;text-decoration:none;letter-spacing:1px;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.background='rgba(201,169,97,0.1)'" onmouseout="this.style.borderColor='var(--line)';this.style.background='transparent'">🎮 自己玩</a>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-v" id="st-day">0<small>日</small></div><div class="stat-k">世界时间</div></div>
+      <div class="stat"><div class="stat-v" id="st-season">—</div><div class="stat-k">季节时辰</div></div>
+      <div class="stat"><div class="stat-v" id="st-kills">0</div><div class="stat-k">累计斩妖</div></div>
+      <div class="stat"><div class="stat-v" id="st-dung">0</div><div class="stat-k">副本通关</div></div>
+      <div class="stat"><div class="stat-v" id="st-agents">6</div><div class="stat-k">在世修士</div></div>
+    </div>
+  </div>
+  <div class="panel left">
+    <div class="left-head">修 士 名 录</div>
+    <div class="agent-list" id="agentList"></div>
+  </div>
+  <div class="panel mapwrap">
+    <canvas id="map"></canvas>
+    <div class="follow-tag" id="followTag">跟随中 · 点击空白取消</div>
+    <div class="map-legend">
+      <span><i class="lg-dot" style="background:#c9a961"></i>城镇</span>
+      <span><i class="lg-dot" style="background:#8fd6b4"></i>资源地</span>
+      <span><i class="lg-dot" style="background:#a78bfa"></i>副本</span>
+      <span><i class="lg-dot" style="background:#ef7b6d"></i>战斗中</span>
+      <span style="color:#6b6557">滚轮缩放 · 拖拽平移 · 点击头像跟随</span>
+    </div>
+    <div class="map-tip" id="mapTip"></div>
+  </div>
+  <div class="panel right">
+    <div class="right-head"><span class="h">世 界 见 闻</span><span class="d" id="logCount"></span></div>
+    <div class="log-body" id="logBody"></div>
+  </div>
+  <div class="panel bar-panel">
+    <button class="btn-play" id="btnPlay">▶</button>
+    <button class="btn-step" id="btnPrev" title="上一帧">◀◀</button>
+    <button class="btn-step" id="btnNext" title="下一帧">▶▶</button>
+    <div class="speed-ctl" id="speedCtl">
+      <button class="spd" data-s="0.5">0.5×</button>
+      <button class="spd on" data-s="1">1×</button>
+      <button class="spd" data-s="2">2×</button>
+      <button class="spd" data-s="4">4×</button>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="tl-track" id="tlTrack"><div class="tl-fill" id="tlFill"></div></div>
+      <div class="tl-head" id="tlHead" style="left:0%"></div>
+    </div>
+    <div class="time-read" id="timeRead">第 1 年 · 第 1 日<small>回放进度 0%</small></div>
+  </div>
+</div>
+<script>
+"use strict";
+// ══════════════ 数据加载 ══════════════
+const REC_URL = (() => { const p = new URLSearchParams(location.search); return p.get('data') || './recording.json'; })();
+let REC = null, WORLD = null, FRAMES = [], LOGS = [];
+const $ = id => document.getElementById(id);
+
+async function boot() {
+  try {
+    if (window.__RECORDING__) {
+      REC = window.__RECORDING__;
+    } else {
+      const res = await fetch(REC_URL);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      REC = await res.json();
+    }
+  } catch (e) {
+    $('loadmsg').textContent = '数据加载失败：' + e.message + '（请确保 recording.json 与本页同目录）';
+    return;
+  }
+  WORLD = REC.world; FRAMES = REC.frames; LOGS = REC.logs;
+  $('loadmsg').textContent = '正在渲染世界……';
+  await new Promise(r => setTimeout(r, 30));
+  initMap(); initAgents(); initLogs(); initCtl(); initStats();
+  $('loading').remove(); $('app').style.visibility = 'visible';
+  requestAnimationFrame(loop);
+}
+
+// ══════════════ 时间换算 ══════════════
+const DAYS_PER_YEAR = 360;
+const SEASONS = ['春','夏','秋','冬'];
+const SHICHEN = ['子时','丑时','寅时','卯时','辰时','巳时','午时','未时','申时','酉时','戌时','亥时'];
+function fmtTime(day) {
+  const yr = Math.floor(day / DAYS_PER_YEAR) + 1;
+  const doy = Math.floor(day % DAYS_PER_YEAR) + 1;
+  const season = SEASONS[Math.floor((day % DAYS_PER_YEAR) / 90)];
+  const shichen = SHICHEN[Math.floor((day % 1) * 12)];
+  return { yr, doy, season, shichen };
+}
+
+// ══════════════ 地图 ══════════════
+const cv = $('map'), ctx = cv.getContext('2d');
+let dpr = 1, vw = 0, vh = 0;
+let view = { scale: 1, ox: 0, oy: 0 };
+let worldBaseScale = 1;
+const agentPos = new Map();   // id -> {x,y} 渲染坐标（插值后）
+let followId = null;
+
+function resize() {
+  const parent = cv.parentElement;
+  vw = parent.clientWidth; vh = parent.clientHeight;
+  dpr = window.devicePixelRatio || 1;
+  cv.width = vw * dpr; cv.height = vh * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  worldBaseScale = Math.min(vw / WORLD.map.width, vh / WORLD.map.height) * 0.96;
+}
+window.addEventListener('resize', () => { resize(); });
+
+function w2s(x, y) {
+  const s = worldBaseScale * view.scale;
+  return { x: vw / 2 + view.ox + (x - WORLD.map.width / 2) * s, y: vh / 2 + view.oy + (y - WORLD.map.height / 2) * s };
+}
+function s2w(px, py) {
+  const s = worldBaseScale * view.scale;
+  return { x: (px - vw / 2 - view.ox) / s + WORLD.map.width / 2, y: (py - vh / 2 - view.oy) / s + WORLD.map.height / 2 };
+}
+function initMap() {
+  resize();
+  for (const a of FRAMES[0].state.agents) agentPos.set(a.id, { x: a.areaX, y: a.areaY });
+  // 交互：拖拽 + 滚轮
+  let drag = null;
+  cv.addEventListener('mousedown', e => { drag = { x: e.clientX, y: e.clientY, ox: view.ox, oy: view.oy, moved: false }; });
+  window.addEventListener('mousemove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) drag.moved = true;
+    view.ox = drag.ox + dx; view.oy = drag.oy + dy;
+  });
+  window.addEventListener('mouseup', () => { drag = null; });
+  cv.addEventListener('wheel', e => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.15 : 0.87;
+    const ns = Math.min(6, Math.max(0.5, view.scale * factor));
+    const rect = cv.getBoundingClientRect();
+    const px = e.clientX - rect.left, py = e.clientY - rect.top;
+    const before = s2w(px, py);
+    view.scale = ns;
+    const after = s2w(px, py);
+    view.ox += (after.x - before.x) * worldBaseScale * view.scale;
+    view.oy += (after.y - before.y) * worldBaseScale * view.scale;
+  }, { passive: false });
+  cv.addEventListener('click', e => {
+    if (e.target !== cv) return;
+    const rect = cv.getBoundingClientRect();
+    const px = e.clientX - rect.left, py = e.clientY - rect.top;
+    // 命中 Agent？
+    let hit = null;
+    for (const [id, p] of agentPos) {
+      const sp = w2s(p.x, p.y);
+      if (Math.hypot(sp.x - px, sp.y - py) < 16) hit = id;
+    }
+    if (hit) { followId = (followId === hit) ? null : hit; $('followTag').style.display = followId ? 'block' : 'none'; }
+    else if (!dragMoved) { followId = null; $('followTag').style.display = 'none'; }
+  });
+  // hover tooltip
+  cv.addEventListener('mousemove', e => {
+    const rect = cv.getBoundingClientRect();
+    const px = e.clientX - rect.left, py = e.clientY - rect.top;
+    let tip = null;
+    for (const a of WORLD.areas) {
+      const sp = w2s(a.x, a.y);
+      if (Math.hypot(sp.x - px, sp.y - py) < 12) {
+        const dung = WORLD.dungeons.filter(d => d.areaId === a.id).map(d => d.name);
+        tip = `<div class="t-name">${a.name}</div>类型：${areaTypeName(a.type)}${dung.length ? '<br>秘境：' + dung.join('、') : ''}${a.minRealm > 0 ? '<br>入境门槛：' + WORLD.realms[Math.min(a.minRealm, WORLD.realms.length-1)].name : ''}`;
+      }
+    }
+    const tipEl = $('mapTip');
+    if (tip) { tipEl.innerHTML = tip; tipEl.style.display = 'block'; tipEl.style.left = Math.min(px + 14, vw - 230) + 'px'; tipEl.style.top = Math.max(py - 10, 8) + 'px'; }
+    else tipEl.style.display = 'none';
+  });
+}
+let dragMoved = false;
+window.addEventListener('mousemove', () => { dragMoved = false; }); let _lastDrag = null;
+cv.addEventListener && 0;
+// 记录拖拽状态供 click 判断
+{ const orig = cv.addEventListener.bind(cv); }
+
+function areaTypeName(t) { return { town:'城镇', mountain:'山脉', forest:'森林', river:'江河', market:'坊市', sect:'宗门', mine:'矿脉', sea:'海域', island:'岛屿', cliff:'悬崖', cave:'洞穴', wilderness:'荒野' }[t] || t; }
+
+// 地图渲染
+function drawMap(curFrame) {
+  ctx.clearRect(0, 0, vw, vh);
+  const g = ctx.createLinearGradient(0, 0, 0, vh);
+  g.addColorStop(0, '#0a0f16'); g.addColorStop(1, '#080b10');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, vw, vh);
+  const s = worldBaseScale * view.scale;
+  // 大陆
+  for (const c of WORLD.map.continents) {
+    ctx.beginPath();
+    c.polygon.forEach((p, i) => { const sp = w2s(p[0], p[1]); i ? ctx.lineTo(sp.x, sp.y) : ctx.moveTo(sp.x, sp.y); });
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(20,28,38,0.85)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(201,169,97,0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+  // 地点
+  const areaById = {}; for (const a of WORLD.areas) areaById[a.id] = a;
+  for (const a of WORLD.areas) {
+    const sp = w2s(a.x, a.y);
+    const isDung = WORLD.dungeons.some(d => d.areaId === a.id);
+    const r = (a.type === 'town' || a.type === 'market' || a.type === 'sect') ? 6 : 4;
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, r + 5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(201,169,97,0.06)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(sp.x, sp.y, r, 0, Math.PI * 2);
+    ctx.fillStyle = isDung ? '#a78bfa' : (a.type === 'town' || a.type === 'market' || a.type === 'sect') ? '#c9a961' : '#8fd6b4';
+    ctx.fill();
+    if (view.scale > 0.85) {
+      ctx.font = `${Math.min(12, 10 + view.scale)}px ${getComputedStyle(document.body).getPropertyValue('--font-kai')}`;
+      ctx.fillStyle = 'rgba(217,210,191,0.75)'; ctx.textAlign = 'center';
+      ctx.fillText(a.name, sp.x, sp.y + r + 13);
+    }
+  }
+  // Agent 移动轨迹（尾迹）
+  if (curFrame) {
+    for (const ag of curFrame.state.agents) {
+      const trail = trails.get(ag.id);
+      if (!trail || trail.length < 2) continue;
+      ctx.beginPath();
+      trail.forEach((p, i) => { const sp = w2s(p.x, p.y); i ? ctx.lineTo(sp.x, sp.y) : ctx.moveTo(sp.x, sp.y); });
+      ctx.strokeStyle = ag.color + '55'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+    }
+  }
+  // Agent 头像
+  if (curFrame) {
+    for (const ag of curFrame.state.agents) {
+      const p = agentPos.get(ag.id); if (!p) continue;
+      const sp = w2s(p.x, p.y);
+      const r = 11;
+      // 战斗光环
+      if (ag.inCombat) {
+        const pulse = 1 + 0.18 * Math.sin(performance.now() / 140);
+        ctx.beginPath(); ctx.arc(sp.x, sp.y, r + 6 * pulse, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(239,123,109,0.8)'; ctx.lineWidth = 2; ctx.stroke();
+      }
+      // 光圈
+      ctx.beginPath(); ctx.arc(sp.x, sp.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(7,9,13,0.9)'; ctx.fill();
+      ctx.lineWidth = 2.5; ctx.strokeStyle = ag.color; ctx.stroke();
+      // 首字
+      ctx.font = `700 ${r - 2}px ${getComputedStyle(document.body).getPropertyValue('--font-kai')}`;
+      ctx.fillStyle = ag.color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(ag.name[0], sp.x, sp.y + 1);
+      ctx.textBaseline = 'alphabetic';
+      // 名字
+      if (view.scale > 0.7) {
+        ctx.font = '10.5px sans-serif'; ctx.fillStyle = 'rgba(217,210,191,0.9)';
+        ctx.fillText(ag.name, sp.x, sp.y + r + 13);
+        // 行动气泡
+        if (ag.currentAction) {
+          const icon = ACT_ICON[ag.currentAction.type] || '行';
+          ctx.beginPath(); ctx.arc(sp.x + r + 1, sp.y - r - 1, 7.5, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(22,30,41,0.95)'; ctx.fill();
+          ctx.strokeStyle = ag.color + '99'; ctx.lineWidth = 1; ctx.stroke();
+          ctx.font = '700 9px sans-serif'; ctx.fillStyle = '#ecd28c'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(icon, sp.x + r + 1, sp.y - r - 1);
+          ctx.textBaseline = 'alphabetic';
+        }
+      }
+    }
+  }
+}
+const ACT_ICON = { cultivate:'修', rest:'息', collect:'采', mine:'掘', fish:'渔', move:'行', ask:'问', fortune:'缘', shop:'市', breakthrough:'破' };
+const trails = new Map(); // id -> [{x,y}...] 最近轨迹点
+
+// ══════════════ 修士卡片 ══════════════
+let selectedId = null;
+function initAgents() {
+  const list = $('agentList');
+  list.innerHTML = '';
+  for (const ag of FRAMES[0].state.agents) {
+    const el = document.createElement('div');
+    el.className = 'acard'; el.dataset.id = ag.id;
+    el.innerHTML = `
+      <div class="acard-top">
+        <div class="avatar" style="background:${ag.color}">${ag.name[0]}</div>
+        <span class="acard-name">${ag.name}</span>
+        <span class="realm-tag"></span>
+        <span class="acard-path">${ag.pathName}</span>
+      </div>
+      <div class="bars">
+        <div class="bar hp"><i></i></div><div class="bar mp"><i></i></div><div class="bar exp"><i></i></div>
+      </div>
+      <div class="acard-status"></div>
+      <div class="acard-foot"><span>灵石 <b class="f-stone"></b></span><span>斩妖 <b class="f-kill"></b></span><span>秘境 <b class="f-dung"></b></span></div>`;
+    el.addEventListener('click', () => { selectedId = selectedId === ag.id ? null : ag.id; followId = selectedId; $('followTag').style.display = followId ? 'block' : 'none'; renderAgents(curFrame); });
+    list.appendChild(el);
+  }
+}
+function renderAgents(frame) {
+  if (!frame) return;
+  const list = $('agentList');
+  for (const el of list.children) {
+    const ag = frame.state.agents.find(a => a.id === el.dataset.id);
+    if (!ag) continue;
+    el.classList.toggle('sel', ag.id === selectedId);
+    if (ag.dead) el.style.opacity = 0.45;
+    el.querySelector('.realm-tag').textContent = ag.dead ? '坐化' : ag.realmName;
+    el.querySelector('.bar.hp i').style.width = (ag.hp / ag.maxHp * 100) + '%';
+    el.querySelector('.bar.mp i').style.width = (ag.spirit / ag.maxSpirit * 100) + '%';
+    el.querySelector('.bar.exp i').style.width = Math.min(100, ag.cultivation / ag.cultivationMax * 100) + '%';
+    const st = el.querySelector('.acard-status');
+    if (ag.dead) { st.innerHTML = `<span class="st-combat">${ag.deathReason || '已坐化'}</span>`; }
+    else if (ag.inCombat) st.innerHTML = `<span class="st-combat">⚔ 战斗中 · ${ag.areaName}</span>`;
+    else if (ag.inDungeon) st.innerHTML = `<span class="st-dungeon">◈ 秘境探索 · ${ag.areaName}</span>`;
+    else if (ag.currentAction) {
+      const t = ag.currentAction.type;
+      const label = { cultivate:'修炼', rest:'歇息', collect:'采药', mine:'挖矿', fish:'赶海', move:'赶路', ask:'听道', fortune:'探缘', shop:'坊市' }[t] || '行动中';
+      st.innerHTML = `<span class="st-move">◈ ${label} · ${ag.areaName}</span>`;
+    } else st.textContent = '云游 · ' + ag.areaName;
+    el.querySelector('.f-stone').textContent = ag.spiritStones;
+    el.querySelector('.f-kill').textContent = ag.kills;
+    el.querySelector('.f-dung').textContent = ag.dungeonsCleared;
+  }
+}
+
+// ══════════════ 日志流 ══════════════
+let logShown = -1;
+function initLogs() { $('logBody').innerHTML = ''; logShown = -1; }
+function renderLogs(day, force) {
+  const body = $('logBody');
+  let idx = logShown;
+  if (force) { body.innerHTML = ''; logShown = -1; idx = -1; }
+  // 找 day 之前的日志
+  let newCount = 0;
+  const autoScroll = body.scrollHeight - body.scrollTop - body.clientHeight < 60;
+  for (let i = 0; i < LOGS.length; i++) {
+    if (i <= logShown) continue;
+    if (LOGS[i].day > day) break;
+    const l = LOGS[i];
+    const el = document.createElement('div');
+    el.className = 'logline ' + (l.type === 'event-good' ? 'event-good' : l.type === 'event-bad' ? 'event-bad' : l.type === 'combat' ? 'combat' : l.type === 'breakthrough' ? 'breakthrough' : l.type === 'dungeon' ? 'dungeon' : l.type === 'agent' ? 'agent' : 'sys');
+    el.innerHTML = `<span class="ld">D${Math.floor(l.day)}</span>${escapeHtml(l.text)}`;
+    body.appendChild(el);
+    idx = i; newCount++;
+  }
+  if (newCount) {
+    logShown = idx;
+    while (body.children.length > 150) body.removeChild(body.firstChild);
+    if (autoScroll) body.scrollTop = body.scrollHeight;
+  }
+  $('logCount').textContent = `${logShown + 1} / ${LOGS.length} 条`;
+}
+function escapeHtml(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// ══════════════ 统计 ══════════════
+function initStats() { }
+function renderStats(frame) {
+  if (!frame) return;
+  const { yr, doy, season, shichen } = fmtTime(frame.day);
+  $('st-day').innerHTML = Math.floor(frame.day) + '<small>日</small>';
+  $('st-season').textContent = `${season} · ${shichen}`;
+  const agents = frame.state.agents;
+  $('st-kills').textContent = agents.reduce((s, a) => s + a.kills, 0);
+  $('st-dung').textContent = agents.reduce((s, a) => s + a.dungeonsCleared, 0);
+  $('st-agents').textContent = agents.filter(a => !a.dead).length;
+  const pct = (frameIdx / (FRAMES.length - 1) * 100).toFixed(0);
+  $('timeRead').innerHTML = `第 ${yr} 年 · 第 ${doy} 日<small>回放进度 ${pct}%</small>`;
+}
+
+// ══════════════ 回放控制 ══════════════
+let playing = false, frameIdx = 0, frameT = 0; // frameT: 0-1 帧内插值
+let speed = 1;
+const SEC_PER_FRAME = 1.6; // 1× 速度下每帧播放秒数
+function initCtl() {
+  $('btnPlay').addEventListener('click', () => { playing = !playing; $('btnPlay').textContent = playing ? '❚❚' : '▶'; });
+  $('btnPrev').addEventListener('click', () => { seekFrame(Math.max(0, frameIdx - 1)); });
+  $('btnNext').addEventListener('click', () => { seekFrame(Math.min(FRAMES.length - 1, frameIdx + 1)); });
+  for (const b of $('speedCtl').children) {
+    b.addEventListener('click', () => {
+      speed = +b.dataset.s;
+      for (const x of $('speedCtl').children) x.classList.toggle('on', x === b);
+    });
+  }
+  // 时间轴：事件标记
+  const tl = $('timeline');
+  const marks = $('timeline');
+  const mkFrag = document.createDocumentFragment();
+  for (const l of LOGS) {
+    if (l.type === 'breakthrough' || (l.type === 'combat' && l.text.includes('击败'))) {
+      const m = document.createElement('div');
+      m.className = 'tl-mark ' + (l.type === 'breakthrough' ? 'bt' : 'cb');
+      m.style.left = (l.day / REC.meta.days * 100) + '%';
+      m.dataset.tip = `D${Math.floor(l.day)} ${l.text.slice(0, 30)}`;
+      mkFrag.appendChild(m);
+    }
+  }
+  tl.appendChild(mkFrag);
+  // 拖动进度
+  $('tlTrack').addEventListener('click', e => {
+    const rect = $('tlTrack').getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    seekFrame(Math.round(ratio * (FRAMES.length - 1)));
+  });
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space') { e.preventDefault(); $('btnPlay').click(); }
+    if (e.code === 'ArrowLeft') $('btnPrev').click();
+    if (e.code === 'ArrowRight') $('btnNext').click();
+  });
+}
+function seekFrame(i) {
+  frameIdx = i; frameT = 0;
+  const f = FRAMES[i];
+  renderLogs(f.day, true);
+  for (const a of f.state.agents) { agentPos.set(a.id, { x: a.areaX, y: a.areaY }); trails.set(a.id, []); }
+  renderAgents(f); renderStats(f); syncTimeline();
+}
+function syncTimeline() {
+  const pct = frameIdx / (FRAMES.length - 1) * 100;
+  $('tlFill').style.width = pct + '%';
+  $('tlHead').style.left = pct + '%';
+}
+
+// ══════════════ 主循环 ══════════════
+let lastTs = 0;
+function loop(ts) {
+  const dt = Math.min(0.1, (ts - lastTs) / 1000 || 0); lastTs = ts;
+  if (playing) {
+    frameT += dt * speed / SEC_PER_FRAME;
+    while (frameT >= 1) {
+      frameT -= 1;
+      if (frameIdx < FRAMES.length - 1) frameIdx++;
+      else { playing = false; $('btnPlay').textContent = '▶'; break; }
+      const f = FRAMES[frameIdx];
+      renderLogs(f.day, false);
+      renderAgents(f); renderStats(f); syncTimeline();
+    }
+  }
+  // 帧间插值：位置平滑
+  if (frameIdx < FRAMES.length - 1) {
+    const A = FRAMES[frameIdx], B = FRAMES[frameIdx + 1];
+    const t = playing ? smoothstep(frameT) : 0;
+    for (const ag of A.state.agents) {
+      const b = B.state.agents.find(x => x.id === ag.id);
+      if (!b) continue;
+      const cur = agentPos.get(ag.id) || { x: ag.areaX, y: ag.areaY };
+      const tx = ag.areaX + (b.areaX - ag.areaX) * t;
+      const ty = ag.areaY + (b.areaY - ag.areaY) * t;
+      cur.x += (tx - cur.x) * Math.min(1, dt * 6);
+      cur.y += (ty - cur.y) * Math.min(1, dt * 6);
+      // 轨迹
+      let tr = trails.get(ag.id);
+      if (!tr) { tr = []; trails.set(ag.id, tr); }
+      const last = tr[tr.length - 1];
+      if (!last || Math.hypot(last.x - cur.x, last.y - cur.y) > 8) { tr.push({ x: cur.x, y: cur.y }); if (tr.length > 14) tr.shift(); }
+    }
+  }
+  // 跟随视角
+  if (followId) {
+    const p = agentPos.get(followId);
+    if (p) { view.ox += (-view.ox - (p.x - WORLD.map.width / 2) * worldBaseScale * view.scale) * Math.min(1, dt * 3); view.oy += (-view.oy - (p.y - WORLD.map.height / 2) * worldBaseScale * view.scale) * Math.min(1, dt * 3); }
+  }
+  drawMap(FRAMES[frameIdx]);
+  requestAnimationFrame(loop);
+}
+function smoothstep(t) { return t * t * (3 - 2 * t); }
+
+boot();
+</script>
+</body>
+</html>
