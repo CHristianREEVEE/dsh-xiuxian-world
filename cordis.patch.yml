@@ -1,0 +1,7 @@
+- insert:
+    - id: xiuxian-world
+      name: dsh-xiuxian-world
+      config:
+        npcCount: 4
+        npcIntervalSec: 30
+        idleMinutes: 20
